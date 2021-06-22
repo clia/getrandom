@@ -14,27 +14,31 @@ use crate::{
 };
 
 pub fn getrandom_inner(dest: &mut [u8]) -> Result<(), Error> {
-    static HAS_GETRANDOM: LazyBool = LazyBool::new();
-    if HAS_GETRANDOM.unsync_init(is_getrandom_available) {
-        sys_fill_exact(dest, |buf| unsafe {
-            getrandom(buf.as_mut_ptr() as *mut libc::c_void, buf.len(), 0)
-        })
-    } else {
-        use_file::getrandom_inner(dest)
-    }
+    // static HAS_GETRANDOM: LazyBool = LazyBool::new();
+    // if HAS_GETRANDOM.unsync_init(is_getrandom_available) {
+    //     sys_fill_exact(dest, |buf| unsafe {
+    //         getrandom(buf.as_mut_ptr() as *mut libc::c_void, buf.len(), 0)
+    //     })
+    // } else {
+    //     use_file::getrandom_inner(dest)
+    // }
+
+    use_file::getrandom_inner(dest)
 }
 
 fn is_getrandom_available() -> bool {
-    let res = unsafe { getrandom(core::ptr::null_mut(), 0, libc::GRND_NONBLOCK) };
-    if res < 0 {
-        match last_os_error().raw_os_error() {
-            Some(libc::ENOSYS) => false, // No kernel support
-            Some(libc::EPERM) => false,  // Blocked by seccomp
-            _ => true,
-        }
-    } else {
-        true
-    }
+    // let res = unsafe { getrandom(core::ptr::null_mut(), 0, libc::GRND_NONBLOCK) };
+    // if res < 0 {
+    //     match last_os_error().raw_os_error() {
+    //         Some(libc::ENOSYS) => false, // No kernel support
+    //         Some(libc::EPERM) => false,  // Blocked by seccomp
+    //         _ => true,
+    //     }
+    // } else {
+    //     true
+    // }
+
+    false
 }
 
 unsafe fn getrandom(
